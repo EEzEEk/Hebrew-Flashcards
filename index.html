@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hebrew Ulpan Flashcards</title>
+<style>
+:root{--pink:#ea4c91;--pale:#fff0f7;--ink:#222;--muted:#707070;--line:#eadde4}
+*{box-sizing:border-box} body{margin:0;background:#faf8f9;color:var(--ink);font-family:Segoe UI,Arial,sans-serif}
+.wrap{width:min(94vw,1100px);max-width:none;margin:auto;padding:clamp(12px,2vw,22px)} header{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+h1{margin:0;font-size:24px}.sub{font-size:14px;color:var(--muted);margin-top:5px}.controls{display:flex;gap:8px;flex-wrap:wrap}
+button,select{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;cursor:pointer}
+button:hover,select:hover{border-color:var(--pink)} .progress{height:9px;background:#eee;border-radius:99px;overflow:hidden;margin:18px 0 9px}
+.progress>div{height:100%;background:var(--pink);width:0}.stats{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:14px}
+.card{height:clamp(430px,72vh,760px);min-height:0;background:white;border:1px solid var(--line);border-radius:22px;box-shadow:0 12px 34px #0000000d;display:flex;align-items:center;justify-content:center;text-align:center;padding:clamp(18px,3vh,34px);position:relative}
+.tag{position:absolute;top:16px;left:16px;background:var(--pale);color:#9e2f62;padding:6px 10px;border-radius:99px;font-size:12px}
+.source{position:absolute;top:17px;right:18px;color:#888;font-size:12px}.prompt{font-size:17px;color:var(--muted);margin-bottom:18px}
+.hebrew{font-family:Arial,sans-serif;font-size:150px;line-height:1;direction:rtl}.name{font-size:52px;font-weight:750}.tap{margin-top:28px;color:var(--pink);font-weight:650}
+.hidden{display:none!important}.answer{width:100%}.answer h2{font-size:38px;margin:0 0 8px}.print{font-size:82px;line-height:1.1}
+.sound{font-size:18px;margin:8px 0 18px}.scriptbox{max-width:440px;background:var(--pale);padding:14px;border-radius:16px;margin:12px auto}
+.scriptbox h3{font-size:14px;margin:0 0 10px;color:#8e2f5f}.scriptimg{height:140px;max-width:100%;object-fit:contain;background:#fff;border:1px solid #f2cedf;border-radius:10px;padding:8px}
+.final{border-top:1px solid var(--line);margin-top:15px;padding-top:13px}.finalletter{font-size:58px}.write{max-width:470px;margin:15px auto 0;border:1px dashed var(--pink);border-radius:12px;padding:10px 12px;color:#6b3850;font-size:14px}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:13px}.actions button{font-weight:700;padding:13px 8px}.again{background:#fff1f1}.hard{background:#fff8e9}.good{background:#f0f8f2}.easy{background:#eef4ff}
+.nav{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}.scriptfront{height:240px;max-width:95%;object-fit:contain;background:white;border-radius:12px;padding:8px}
+@media(max-width:600px){.wrap{padding:12px}.card{height:clamp(390px,68vh,620px);padding:18px 14px}.hebrew{font-size:clamp(92px,26vw,125px)}.name{font-size:clamp(34px,10vw,40px)}.actions{grid-template-columns:repeat(2,1fr)}.source{top:auto;bottom:10px}}
+
+/* Responsive back-side scaling */
+.answer{
+  width:100%;
+  font-size:clamp(14px,1.5vw,20px);
+  padding:clamp(4px,1vh,12px) 0;
+}
+.answer h2{
+  font-size:clamp(34px,5.5vw,64px)!important;
+  line-height:1.05;
+  margin:clamp(4px,1vh,10px) 0 clamp(8px,1.5vh,18px);
+}
+.answer .print{
+  font-size:clamp(64px,10vw,120px);
+}
+.answer .sound{
+  font-size:clamp(22px,3.2vw,38px)!important;
+  line-height:1.18!important;
+  margin:clamp(8px,1.3vh,16px) 0 clamp(10px,1.7vh,20px)!important;
+}
+.answer .scriptbox{
+  max-width:min(72vw,560px);
+  padding:clamp(10px,1.5vw,18px);
+  margin:clamp(8px,1.3vh,16px) auto;
+}
+.answer .scriptbox h3{
+  font-size:clamp(13px,1.5vw,18px);
+}
+.answer .scriptimg{
+  height:clamp(100px,18vh,190px);
+  width:auto;
+  max-width:100%;
+}
+.answer .finalletter{
+  font-size:clamp(48px,8vw,92px);
+}
+.answer .write{
+  max-width:min(76vw,600px);
+  font-size:clamp(13px,1.35vw,18px);
+  padding:clamp(9px,1.3vw,14px);
+  margin-top:clamp(8px,1.3vh,16px);
+}
+@media (max-height:700px){
+  .answer h2{font-size:clamp(30px,5vw,50px)!important}
+  .answer .scriptimg{height:clamp(80px,15vh,130px)}
+  .answer .sound{font-size:clamp(20px,2.8vw,30px)!important}
+  .answer .write{font-size:clamp(12px,1.2vw,15px)}
+}
+
+
+/* ---------- Adaptive device UI ---------- */
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+body.phone-ui{
+  overscroll-behavior-y: contain;
+}
+body.phone-ui .wrap{
+  width:100%;
+  max-width:none;
+  min-height:100dvh;
+  padding:
+    calc(8px + var(--safe-top))
+    calc(10px + var(--safe-right))
+    calc(10px + var(--safe-bottom))
+    calc(10px + var(--safe-left));
+  display:flex;
+  flex-direction:column;
+}
+body.phone-ui header{display:block}
+body.phone-ui header > div:first-child{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:8px;
+}
+body.phone-ui h1{font-size:clamp(18px,5vw,24px)}
+body.phone-ui .sub{display:none}
+body.phone-ui .controls{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:8px;
+}
+body.phone-ui .controls select,
+body.phone-ui .controls button{
+  width:100%;
+  min-height:44px;
+  padding:8px 9px;
+  font-size:clamp(13px,3.5vw,16px);
+}
+body.phone-ui .controls button#reset{display:none}
+body.phone-ui .progress{margin:9px 0 5px;height:7px}
+body.phone-ui .stats{
+  margin-bottom:7px;
+  font-size:clamp(11px,2.9vw,13px);
+}
+body.phone-ui .card{
+  width:100%;
+  min-height:0 !important;
+  height:auto !important;
+  flex:1 1 auto;
+  max-height:none !important;
+  padding:clamp(16px,4vw,24px);
+  border-radius:18px;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+}
+body.phone-ui .tag{
+  top:11px;
+  left:11px;
+  font-size:10px;
+  padding:5px 8px;
+}
+body.phone-ui .source{
+  top:12px;
+  right:11px;
+  bottom:auto;
+  font-size:10px;
+}
+body.phone-ui .prompt{
+  margin-top:26px;
+  margin-bottom:12px;
+  font-size:clamp(15px,4vw,19px);
+}
+body.phone-ui .hebrew{
+  font-size:clamp(76px,28vw,135px) !important;
+}
+body.phone-ui .name{
+  font-size:clamp(30px,9vw,46px) !important;
+}
+body.phone-ui .tap{
+  margin-top:18px;
+  font-size:14px;
+}
+body.phone-ui .answer h2{
+  font-size:clamp(38px,12vw,62px) !important;
+  margin-top:24px;
+}
+body.phone-ui .answer .print{
+  font-size:clamp(58px,19vw,92px);
+}
+body.phone-ui .sound{
+  font-size:clamp(22px,6.4vw,32px) !important;
+  line-height:1.15 !important;
+}
+body.phone-ui .scriptbox{
+  width:min(100%,420px);
+  padding:9px;
+  margin:8px auto;
+}
+body.phone-ui .scriptimg{
+  height:clamp(86px,23vh,130px) !important;
+}
+body.phone-ui .final{
+  margin-top:8px;
+  padding-top:8px;
+}
+body.phone-ui .finalletter{
+  font-size:clamp(42px,13vw,65px);
+}
+body.phone-ui .write{
+  margin:8px auto 0;
+  padding:8px 10px;
+  font-size:12px;
+}
+body.phone-ui .actions{
+  order:5;
+  position:sticky;
+  bottom:calc(4px + var(--safe-bottom));
+  z-index:10;
+  grid-template-columns:repeat(4,1fr);
+  gap:5px;
+  margin-top:7px;
+  padding:5px;
+  background:rgba(250,248,249,.95);
+  backdrop-filter:blur(8px);
+  border-radius:12px;
+}
+body.phone-ui .actions button{
+  min-height:48px;
+  padding:8px 2px;
+  font-size:clamp(12px,3.2vw,15px);
+}
+body.phone-ui .nav{
+  order:6;
+  display:grid;
+  grid-template-columns:1fr 1.25fr 1fr;
+  width:100%;
+  gap:6px;
+  margin-top:7px;
+}
+body.phone-ui .nav button{
+  min-height:46px;
+  width:100%;
+  padding:8px 4px;
+  font-size:13px;
+}
+body.phone-ui #front,
+body.phone-ui #back{width:100%}
+
+body.phone-ui.phone-narrow .controls #shuffle{display:none}
+body.phone-ui.phone-narrow .card{border-radius:14px}
+body.phone-ui.phone-narrow .actions{grid-template-columns:repeat(2,1fr)}
+body.phone-ui.phone-narrow .nav{grid-template-columns:1fr 1fr}
+body.phone-ui.phone-narrow #prev{display:none}
+
+body.phone-ui.phone-landscape .wrap{
+  padding-top:calc(5px + var(--safe-top));
+}
+body.phone-ui.phone-landscape header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+body.phone-ui.phone-landscape header > div:first-child{display:block}
+body.phone-ui.phone-landscape .controls{
+  margin-top:0;
+  display:flex;
+  flex-wrap:nowrap;
+}
+body.phone-ui.phone-landscape .controls select,
+body.phone-ui.phone-landscape .controls button{
+  min-height:36px;
+  padding:5px 7px;
+  font-size:12px;
+}
+body.phone-ui.phone-landscape .progress{margin:4px 0 3px}
+body.phone-ui.phone-landscape .stats{margin-bottom:3px}
+body.phone-ui.phone-landscape .card{
+  min-height:52dvh !important;
+  padding:10px 20px;
+}
+body.phone-ui.phone-landscape .prompt{
+  margin-top:16px;
+  margin-bottom:6px;
+}
+body.phone-ui.phone-landscape .hebrew{
+  font-size:clamp(70px,20vh,115px) !important;
+}
+body.phone-ui.phone-landscape .answer h2{
+  margin-top:12px;
+  font-size:clamp(34px,10vh,55px) !important;
+}
+body.phone-ui.phone-landscape .scriptbox{
+  display:inline-block;
+  vertical-align:top;
+  max-width:42%;
+  margin:4px 5px;
+}
+body.phone-ui.phone-landscape .scriptimg{height:70px !important}
+body.phone-ui.phone-landscape .write{display:none}
+body.phone-ui.phone-landscape .actions button,
+body.phone-ui.phone-landscape .nav button{
+  min-height:36px;
+  padding:5px;
+}
+
+#deviceDebug{
+  display:none;
+  position:fixed;
+  right:8px;
+  top:8px;
+  z-index:999;
+  padding:5px 8px;
+  border-radius:8px;
+  background:#111;
+  color:#fff;
+  font:11px/1.2 monospace;
+  opacity:.8;
+  pointer-events:none;
+}
+body.debug-device #deviceDebug{display:block}
+
+</style>
+
+<meta name="theme-color" content="#ea4c91">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Hebrew Cards">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png">
+
+</head>
+<body>
+<div id="deviceDebug"></div>
+<div class="wrap">
+<header>
+<div><h1>Hebrew Flashcards</h1><div class="sub">Version 5 · automatic desktop + phone UI · full Chapter 1</div></div>
+<div class="controls">
+<select id="deck">
+<option value="letters">Alphabet</option>
+<option value="words">Chapter 1 full</option>
+<option value="all">Mixed: letters + Chapter 1</option>
+</select>
+<select id="mode">
+<option value="recognition">Recognition</option>
+<option value="production">Production</option>
+<option value="mixed">Mixed mode</option>
+</select>
+<button id="shuffle">Shuffle</button><button id="reset">Reset</button>
+</div>
+</header>
+<div class="progress"><div id="bar"></div></div>
+<div class="stats"><span id="counter"></span><span id="score"></span></div>
+<div class="card" id="card">
+<div class="tag" id="tag"></div><div class="source" id="source"></div>
+<div id="front"><div class="prompt" id="prompt"></div><div id="frontcontent"></div><div class="tap">Click or press Space to reveal</div></div>
+<div id="back" class="answer hidden"></div>
+</div>
+<div class="actions hidden" id="actions">
+<button class="again" data-rate="again">Again</button><button class="hard" data-rate="hard">Hard</button><button class="good" data-rate="good">Good</button><button class="easy" data-rate="easy">Easy</button>
+</div>
+<div class="nav"><button id="prev">← Previous</button><button id="reveal">Reveal</button><button id="next">Next →</button></div>
+</div>
+<script>
+const cards=[{"letter": "א", "name": "Alef", "sound": "Usually silent; carries a vowel sound", "final": "", "page": 21, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACHUlEQVR4nO3dS27qQBRAQfyU/W+ZN4hiOR85hgySun3OCImJRXG7DWrEdr/fbyX377cvoH5ahHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXI9/LbF/Bk27btjxf/t5SmkI8kPI5gkYR1TN0Ln+jL2R2wjy5BeLLwvj5FQw4nPLlxPT61bZurOJlwR3J5rjT2duZbv5OhtJpJeNFjxnTOJNy7juRyDtwLH1oSXbm94VO4QtMI3buSp5tGeGzAInmlyYSLFCEfSbjICnkxkrCORcgXIV+EfJMJF/mYP5lwkSLkIwlPVsgFPzKShNdbYTscTrhCAwnHHIq5GE+44Ob3IZ7wy5YaxJmEtzfF6zPqMo8lvL1XPD+T32nuP92O9/nnEzOOe5Pvvkdf+tlfBcBT+Ogx3w+QA/BeI6ewjk2+nVmkCPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQ7z8gPWQuByY/6AAAAABJRU5ErkJggg==", "final_script": "", "kind": "letter"}, {"letter": "ב", "name": "Bet / Vet", "sound": "b with dagesh; v without", "final": "", "page": 26, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACF0lEQVR4nO3dy4rCMABA0WaY//9lZyFIsb47ICe9dydEaTkkaaDgOJ1OS8n9fPsCam8R8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXI9/vtC9jbGGP98ebfblyNuTcMbdA3s7Z5eiOvYIvBC+lbftsx26mJphK+6/f0R9xUwktv+U2zeK6z98LPmmxT5GdhHZFwsueaIxJOVoR8ByXUH2HWHZTwKno7jJAvQr4I+SLki5AvQr55CPccDOhj4gyEY4yzH328+7gZCA8eT/jZzJtpvvKEV31gQ2+Ey3yEB8wm3L+K6lNw0Qlv9th1pl3w3DyE6/n0otMEU3ChCbfr4WPFy/Fx/ZUJgl9CvHi8+zqTe8s3Uwnv+W0HrENv9nEq4bIsY8AX/4/Be2F+52DCOhchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBch3x+CfmEpz/AuRwAAAABJRU5ErkJggg==", "final_script": "", "kind": "letter"}, {"letter": "ג", "name": "Gimel", "sound": "g", "final": "", "page": 36, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACPElEQVR4nO3c0aqiUBiAUR3m/V/ZuRAi8tBkDXPO+v2+K6EIbbG3udHWbduWkvv13TtQnxYhX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8v797B/5r67ruG5P+kfxCo/Dm97CtdyHCqUXIFyFfhHwR8l2XcMyP0mnXhV/C7FeB27aNYbtvDuETnpFyt4YQHpHu119mE044Fz4Ibdv2sH42aTntGE949PvybYMVbcIX/V551c0mrIUmPDUEX/kENJjwjUbOpUMI37OZIaoSzpgD/0kq4dvdRt6MIbiMWZ051Ri8vcuNwnlNIBw2qs42gfDiRcg3gfDiFxgTCC9ehHwR8qmEDxcSVz4dqoR1K0I+mLC5dG/UMve6rqcW2+7V3VU6eBQun33vM/wWnXB5dzqdNOvyhMf+yvP5fVM/qgmER4MXn6843vctdu78/8N78ljT8dUxBz6KcO/5RDrweOcd0tWacC68eBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfH8A3L9wIxpgF9QAAAAASUVORK5CYII=", "final_script": "", "kind": "letter"}, {"letter": "ד", "name": "Dalet", "sound": "d", "final": "", "page": 31, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACMUlEQVR4nO3d0YriQBRAwc6y///L2QdBRAd1Rwenbs55biRJ2Z0YI277vq+S+/PpDahXi5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5Dv76c34J1t2/ZwzLw/ddhm7NIV3u1O3erO2PE1gPAh3p3BD8cT2YSXJM/vyH+p//7gy5nv+d0OfuYM+ptTCb/t9/DVuEjC14+4vnheRhJe9i4MdyJ6hO861mMmokd42RiGV7IJ3xu6lsKETcFTKmF+57zb3OFdpc7Cnwh9c0TIFyHfcQnHfF9xXMLLXL91WML3ftHx2bwPFS82Zv08dyDCkU9drNmEd+55zsA7NZDw/t3qSXinBl7O3EGa57dGEq619n0fqfVlMwlPPfNA8IAmE66hK+dVwwnXuKdGb5tPOL4jEg6biIcgnH1GPATh7CLki5AvQr4I+Y5IOOwC9SiEZ7Zhfkv/rX2t48zCwUXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyHfP07lfAH4hAKwAAAAAElFTkSuQmCC", "final_script": "", "kind": "letter"}, {"letter": "ה", "name": "He", "sound": "h", "final": "", "page": 24, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACGElEQVR4nO3dy26CABBAUWj6/79MF2yMTRMRGj3jvUvDAjgODwNx3bZtKbmvV69AnS1Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkO/71SvwL63revfJ4D/FWcds22+2vxqzyXsTCO/w/tqiBxfj4glvYR7ZlqPLv3/25cwTHreLPX7sfedgwqfnaZiiSnhy109SJAkvvzChFUnCS5pxLbMMILxKwh1Ej3DeXcHJPMILm/EN8Aj3/b5t2+UA6LHUI1ymTM9VkYR1W4R8EfJFyBchH//gRXf6o6YQvbE72SjCz+yjCWdMLU94d/47o4KeSnnC+lzCMc8kTiB09/4lTSB84tZwzAguMwiPNslvGUZ49GnuGY36ge1o+vzt2VPYCxXLgClcjl/CjMHb499sKvtAWkuEA4qQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5PsBLL92FS1rLtIAAAAASUVORK5CYII=", "final_script": "", "kind": "letter"}, {"letter": "ו", "name": "Vav", "sound": "v; can also help represent o/u", "final": "", "page": 19, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAABmUlEQVR4nO3dsQoCMRAA0UT8/1+OhSD2IsfsvVel3DBsGbLPOYuyx9UD8CsJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzDvefUA/7X3fh8G/6gyeQs//WabnPAmJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTMG9swu/HhYPfh67BCe9jfsLZK7jW2uNvON78LRxPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMkzBPwjwJ8yTMewHKJxAnau/qRgAAAABJRU5ErkJggg==", "final_script": "", "kind": "letter"}, {"letter": "ז", "name": "Zayin", "sound": "z", "final": "", "page": 34, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACIUlEQVR4nO3dzWrbYBBAUan0/V9ZXRiMcVI3TQLhzNy78s9G4jDSJ1vG53VdR8n9+ukNqK8WIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXId/vn96A7+k8z/vjbX/bMGEKH/0WNoHwsW0jeMwjXFiEfDzh8hPhMYCwJhOe57lhRodcFz72xPb0dN6S9dR36W9z9rRfg6/9Zx5I3yJd13V/cdgBdiDhiyF7fGuMok34lmHYQfIj2YSfaN4gjiL8xAgOUBxFuLM5hB8fwWHnyyGEw1T+qwmEX/TTT4f2B2ybh+/ehClcXoR8EfJFyBchX4T8snYjoX4h+NRGwmFFyLeOcN7dUOsI57WLcN4IHqsIhy1E7y0ifGrGCB57CEceQm+tIBzsd+hf+f6zDTeajiV8d/Eyz++YRPh6wTkS79YQwhd+g/Fu8T9OqxUr0tlFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyPcHssdeKdQMrYgAAAAASUVORK5CYII=", "final_script": "", "kind": "letter"}, {"letter": "ח", "name": "Chet", "sound": "kh / guttural ch", "final": "", "page": 25, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACB0lEQVR4nO3dwUoDMRRA0Rnx/395XFRKGatoFct5uXfbLhIOL+kUSvfjOLaSe3n2Auq3RcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBMI931/9hKeGU948VtZcaf/8Of7cvQ2v+712Qv4p67Y8yzhKbw7gp9t5/Rmd9cf4+/Ca8dxfAFzemnS3akSPmBwMh6jSBLu+9+c/zMUScKL32OK805UkvBuyz5gzCF8OH0QFyWcNIiLEp6iB3FdwjGDuC7hmCJ8zz1LI+SLkC9Cvgj55hCOeUj4aXMIly1Cvgj5InzPvUoj5IuQb11C90vRU+sS3uZehFuEA1qU8PYUpUdwG0P4MIPut40h/FFjPshcWpHw2oAR3PQfp618fl5bcQon+W1rEg4rQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5DvDQAFWBM2IeaFAAAAAElFTkSuQmCC", "final_script": "", "kind": "letter"}, {"letter": "ט", "name": "Tet", "sound": "t", "final": "", "page": 28, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAAB/0lEQVR4nO3dQWobQRBA0Z6Q+19ZWQgGBYFNYoN5Vf+vtJzmUUXPbHQ9Ho9Tcr9++gHqq0XIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXI9/unH+B7uq7r/r3tbxsmTOGr38ImEL62bQTPAMLNK/QZT1g2YSN4dMI6NOHyi+gdTPja2i16XMJG8E4lrLsJhJu36JlBuLwI+bYTXtel34xWE954tOJewjEf5/YSjmkCIb0Gv94EwuVFyLeUcNLuHUI4ieRfUwm/8TWAfqM4LmHdzSFcu0thwv9egGO+yzyDCc8bwM5BtAnf+1Rx2AieAYTvDB8ozvM751xzTvK33Mc7dsypzyTCZ58u0mHnPfMIXxu5Nt+bTLgk/jpTEfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8fwBtLUkt14WZdgAAAABJRU5ErkJggg==", "final_script": "", "kind": "letter"}, {"letter": "י", "name": "Yod", "sound": "y; can also help represent i", "final": "", "page": 20, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAABn0lEQVR4nO3dMQrDMBAAQSnk/192uuA+BLOnmcrlmeUKS4X3dV2LstfTA/ArCfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfMkzJMwT8I8CfPeTw/wX3vv7/PU3/zZwrzJCe8rONjkhIeQME/CPAnzJMyTME/CPAnzTkk49XRtnZNwMAnzJMyTMG9swkOuKdbghOc4IuHgL4o1OOHsbHf7nFedauwWnkPCPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CPAnzJMyTME/CvA9AqhMk7U3iDgAAAABJRU5ErkJggg==", "final_script": "", "kind": "letter"}, {"letter": "כ", "name": "Kaf / Khaf", "sound": "k with dagesh; kh without", "final": "ך", "page": 33, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACB0lEQVR4nO3dy2rDMBBAUbn0/385XRRCSNMkfUB7RvfuDFpYOQy2QZDjdDqtknv56xuonxYhX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8r399A7/ZcRwP18z7X45jxpYu8a52dNN1xq7f4wnv4H227OFiK5vwDPPkLkZCqq8zx3F81e/mymcen/88ewq/1xWb/guoU/iL6YO4I6E+dlftSDisCPk2JXzm819pU8JJRcgXIV+EfBHyRbgW/rEfId+mhPSH4FWbEk4qQr4I7XeZtSfhpAfh2pPwMn0E14aEw0Zw7UY47NTMexsRjvRb7oH8H54gHeO3Bkzh5YHSO2suLyf5Lf0c6f3T2SPPbn/MJjz3cBBnbPNmQwh3jn8WVoR8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8bx/ZXhovQWjLAAAAAElFTkSuQmCC", "final_script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAAB00lEQVR4nO3dwWqDQBRAUS39/1+2i0IJQkOrgXDe3Ls1C4fDGxWF7MdxbCX38e4TqLtFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8n+8+gde37/tvh0b+3+Y+ZlUnudO6nh+lm0D4d57HXw5Y+Hc84X9V5o2jfTtzYaqeb7BiMOHlXXHA5D0GE/50k0QfRJ7wmt+kQYSfCycx3Imfwopw2/DLYYR8EfJFyBfhtuE3txHyRci3KCH9FHFqUcJJRci3IuGwt74rEg4rQr7lCIftotuChPPiv2CrppAvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+b4AvBxGFNfzF/EAAAAASUVORK5CYII=", "kind": "letter"}, {"letter": "ל", "name": "Lamed", "sound": "l", "final": "", "page": 18, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAAB5UlEQVR4nO3czWqDQBhAUaf0/V/ZLgIizQ8moaRnvGdn4mL08gXBMGNd1yWyr08vIO8qIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvO9PL+BPjDH2h9ueq78+vz5BNOjV37TvdO/qrlu692G2H9Ij/W5+dW9A/7/ZEp7QVAkPjuDBExRzPs4cdKk4hv1AMM8UPjWCe3S/ZaaEp1VCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkDdnQvfvaC+YM+GplJBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQp6a8FRvBB8jE176VfGCTLip4qInvEffAeEpfMIGUd1y5UE59Ipepk7hzU7rup6t3+JOYTbqFGZTQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQl4JeSXklZBXQt4PELVAHs5VtzMAAAAASUVORK5CYII=", "final_script": "", "kind": "letter"}, {"letter": "מ", "name": "Mem", "sound": "m", "final": "ם", "page": 19, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACEklEQVR4nO3dUYrbQBBF0VbI/rfsfBgGwSSQsT/Mqbp3BUKH15bAoOvxeJyS+/XpC6h3i5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki/Bc13Vd16ev4vV+f/oC3urr1r/82SIa7xm8wvvdf01igN+hCd9sht/ZTDgmlfD7hsas6qephPXVKMKdQxxFuDOV8F8vgguHqBLWVwMJtw1xCOHm74IPITyLFecQ3lt1lo4ivA9xj+IowrPyOB1C+NfNLRniEMJ724Y4kPDehiHOJFz1XDOT8Gw6TscS3ps9xMmES47TyYRnh+JwwrNAcT7hma5o/5v7tYYprljhGf2OsYXwnPN4PEZCLiJ8Nk9xCOGPYL7PkXbd+DjzjGa7B6/waTD1F+7/gwnPoCW9k01YJ8IBRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfH8AQo1SLNEmVrAAAAAASUVORK5CYII=", "final_script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACK0lEQVR4nO3d24riQBRA0WSY//9l50EI4m3SLUPPOrX3kwhCisWpaEhwv1wuW8n9+ukDqE+LkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5fv/0Afzb9n1/fHPYv6vs9HoOobtVPJW7i174bfAUvnJ65Xr3kevrAZCjzoX7vh8wT23eo6INITzwtr8N1jzFIYRHZzbGAZvnbaMIz9t84+vPf9sowk9yFdclHLOdziEcQ/LV5hB+oxlnxKUJZxQhX4R8EfJFyBchX4R8EfJFyDeHEL228nlzCJdtacK7wUUvlI8iXHMvHUW4fUVxxghu8wgXbA7hMUZnBnHMCG5jCK8Gt4pvICf5bfTd3E+7elyRHu/XfnTV/Tb3mYqTk/RqFtFVP23aFN41iepVQ86FKzeBcIVRe9MEwsXjCRcfwQ0lPPkc2iKpPyrqiJzCui1Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuT7A7PmcCJWVpnVAAAAAElFTkSuQmCC", "kind": "letter"}, {"letter": "נ", "name": "Nun", "sound": "n", "final": "ן", "page": 22, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAABz0lEQVR4nO3dzUrEMBhA0VR8/1eOC0GGCqLOYjhf7l112XDID7Sl1957ldzbq2+gni1Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkO/91Tfwyq7r+rygfxNw7iz88tM7l3BMEfJFyBchX4R8Ea6Fn04j5IuQL0K+CPki5IuQL0K+CPnOJaSfET52LuGYIuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9CvnMJ6bfWHjuXcEwR8kW4Fv7s8FDCMRvhOpZwUicS3qYgvYou+lv774uhjvG/Ln3Yf4UcNgXXgIV0731j+OGoMs9vDZiFt35/1Bwz8GmEt07YL4cTnhC/F1aEfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfB/OHTQgHGobTgAAAABJRU5ErkJggg==", "final_script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAABmElEQVR4nO3cMQoDIRQAUQ25/5U3bdg2hGW+73V2ymAj+Pd1XYuy19Mb4FcS5kmYJ2GehHkS5kmYJ2GehHkS5kmYJ2GehHkS5kmYJ2GehHkS5kmYJ2GehHkS5kmYJ2GehHkS5kmYJ2GehHkS5kmYJ2GehHkS5kmYJ2GehHkS5kmYJ2GehHkS5kmYJ2GehHkS5kmYJ2GehHnvpzfwF3vv7+XsycduYZ6EeRLmSZgnYZ6EeRLmSZgnYZ6EeRLmSZgnYZ6EeRLmSZgnYZ6EeRLmSZgnYZ6EeRLmSZgnYZ6EeRLmSZgnYZ6EefMTzv6Ztk5IOJ6EeRLmSZgnYZ6EeRLmSZgnYd7AhLe5QeMNTHia4QnHP5CutfYJh5xt+C08gYR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZJmCdhnoR5EuZ9APPxECS+lxRPAAAAAElFTkSuQmCC", "kind": "letter"}, {"letter": "ס", "name": "Samekh", "sound": "s", "final": "", "page": 32, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACHUlEQVR4nO3d0UrrQBRA0cnF///l+qCUYMWbmoqu073fCn3IsDjTCSR0u1wuq+T+/fYF1Nki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPki5IuQL0K+CPlefvsCfqpt2/YfB/8pzjZsbR/kPm3akses5+uxu6Wds/ABKzm+Z47cXfnjzBmVI7vu348n3Pdfv9svDFC0CfcAB+dvxua5DyZ81ADpgwgT7rtrtoYNokr42NGhB1ElrGsTCIdtjPdGEp7f9yapk4S1L8L33BNNhHwR8kXIFyFfhO+5txkR8k0gdO8HHtIEwicvQj6S8PzRY9JzUCThbc/8cziE8Ez0CC6X8MyzaMNGViV8VPoILprwe4M4bAQXTbjuV5x0EL024Z2KdeCtl5F4bw0hfOvgJjlpyWsY4bVPLUeudE0lfKrs40ytCAcUIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyvQKZhm0S5ou7MQAAAABJRU5ErkJggg==", "final_script": "", "kind": "letter"}, {"letter": "ע", "name": "Ayin", "sound": "Usually silent in modern Hebrew; carries a vowel", "final": "", "page": 29, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACRElEQVR4nO3dzYrCQBBF4erB93/lzCIQQk9+zYCe2+esRLJQPqqIjWKbpqmM3M+nX4A9TUJ8EuKTEJ+E+CTEJyE+CfFJiE9CfBLikxCfhPgkxCchPgnxSYhPQnwS4pMQn4T4JMQnIT4J8UmIT0J8EuKTEJ+E+CTEJyE+CfFJiE9CfBLikxCfhPgkxCchPgnxSYhPQnwS4pMQn4T4JMQnIT4J8UmIT0J8EuKTEJ+E+CTEJyE+CfFJiO/16Rfwz7XWLv7/TWtteYz+y5yrb/j7u06yvvL04u8vhLBTqR2YMLy5tEW61G3USLy5kCmsrUGsqmmagvHmcghrR3Ep6Z2ui/pQcYCU6ldhhBVNtVca4d4uPd6x6KIIg50OyiHsPtr/3aipwCGEm0czgygmEN467cxTTCA8aIQbVDzh6QjGr1M2YRjGe7EJ1906mkmyzyEctlEIg+9rwIRJy/BJYMK7pQ7iQISpgQm7qRp2r4IJn5S0VKMIxxzEKMLjUoHZhO8duyRt0aITbrapuDwZ5lcBhHvf2l5Dpq7QuZDvkQ64P5fwUzh3ypPqVzFT2HX9J2oBhUxh1zh+lUo4VBLikxCfhPgkxCchPgnxSYhPQnwS4pMQn4T4JMQnIT4J8UmIT0J8EuKTEJ+E+CTEJyE+CfFJiE9CfBLikxCfhPgkxCchPgnxSYhPQnwS4pMQn4T4JMQnIT4J8UmIT0J8EuKTEJ+E+CTEJyE+CfFJiE9CfBLikxCfhPgkxCchPgnxSYhPQnwS4pMQ3y+4fYUSrWFiCAAAAABJRU5ErkJggg==", "final_script": "", "kind": "letter"}, {"letter": "פ", "name": "Pe / Fe", "sound": "p with dagesh; f without", "final": "ף", "page": 39, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACO0lEQVR4nO3d0Y6aUBRAUWj6/79MH0woscpk1GS6Dns/Gh+4rJyLosZ127al5H799AHUu0XIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8v3+6QP4ZOu6nj9h5F/jrDNW9SXeXTNWfWsC4dHvZDl3zAMWfssmfEFlHiT8cuY1jLunfXcH/g9TCecN08uphMe+6zdsEEnC90/6JEWPsC30Lo/w2Af93EFUCbdte9NvzPh6N9jGnPpPpU5h7UX4N/RyeGnCGXuydy181skMzaB61gRCdAP8VPxGes2PeY/ZU7j7Pbxh9iXejBs9MOEzv4ePDE7dSE/8rpZKWHsR8pGEH3kXMeO1zIISHrv4m8JlAGFNIHxhEMfsogtK+OYZn+S3oIT/9vIVUfdb6G9zP2Q7X86w+bsFT+FDgHVdn03kSL+FnsK9K/+saZlBuHfNT31HEV4z+FpYtyLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLk+wPDUYsW9h1hjgAAAABJRU5ErkJggg==", "final_script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACQklEQVR4nO3cy46bQBBAUYjy/79MFkiOxXjG84hinep7l16BjopuHvJ+HMdWcr9efQD10yLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+X6/+gD+a/u+X34Z8KfIC03hze+ebd/3t65WqxBe/C7DRysuQfhw/gZcQs+WIHyvyxX1hUfyk+YTujafbD7h+BYifLr4ofM6nBBV+VLDCVcowr+htxkR8i1NeL9SoiO4rUw4ZqezLuF97ghuq71sOrvMH+23LUX48Mqp+22zCT9e7QbgnU0jfLpJGSN3awLhJ/eW8/DObMKny9uYO4cPUgmn7k2+EUk48kO0b0cS3rcy3pn3dGbGg81/mEdYl2zCFTacT/MI337FuzikR7g9WgJXhiQJt207jiPIM/umoh3p5k5h3YqQL0K+CPki5IuQL0K+CPki5IuQL0K+UYQLPuPeJhGefgsqDiG8l1tNcQjhyg0hfPjicJFv3fZJ5/beJXTSOb5tFOHZIsN3ayDhag1ZC1cuQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4/bkRnS447SocAAAAASUVORK5CYII=", "kind": "letter"}, {"letter": "צ", "name": "Tsadi", "sound": "ts", "final": "ץ", "page": 30, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACHklEQVR4nO3dwWqDUBQA0Wfp//+yXQRCMGnTWmg6c2eWrpTDVZ8Kbvu+ryL39uodqN8WIb4I8UWIL0J8EeKLEF+E+CLEFyG+CPFFiC9CfBHiixBfhPgixBchvgjxRYgvQnwR4osQX4T4IsQXIb4I8UWIL0J8EeKLEF+E+CLEFyG+CPFFiC9CfBHiixBfhPgixBchvgjxRYgvQnwR4osQX4T4IsQXIb4I8UWIL0J8EeJ7f/UO/EXbth22mH7tsJkO5tC93CHHsWsJL36Ho1OOo/BauG3bQ7+HW55O6v/PRngl+Wy8BGN3SEUoGKkTeQhv/Xyj9kUewrFJCMeO4NIQnk7gbSMUkPw07dL+s3ynXNsUfj+H35pG+HThT2wQodJvDXzZJPNbbkLle4n7tCfSOc9L/YsK/Sxqp/Davu9PX/yi8xNeEitOIVxexUGES6o4i1DZOELfII4j9BUhvgjxRYhvImEP2PAJ7kJvm0goK0J8EeIbR3i4EApubcYR+ppF6BvBNYpQ6bfoX7CdXuFp/Bad8EQmvEv+L9j0DboWWosQX4T4IsQXIb4I8UWIL0J8EeKLEF+E+CLEFyG+CPFFiC9CfBHiixBfhPgixBchvgjxRYgvQnwR4osQX4T4IsQXIb4I8UWIL0J8EeKLEF+E+CLEFyG+CPFFiC9CfBHiixBfhPgixBchvgjxRYgvQnwR4osQX4T4IsQXIb4I8X0A0zJwFkb+WGUAAAAASUVORK5CYII=", "final_script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACNklEQVR4nO3cyW7iUBBAURz1//8yvbASWUCYW/Qp37NDbAxX9fwY7OV4PB4i+/r0AeRVJeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5fz59AB+wLMv2oX5f5EV/AQ85ibflvg87Wkh/+h2/XXyWs6OE505CohX3knA7gp89krcbmHBZlofmSR/EITvS65tMMcz9+ITDPiE8AU5YvJWacNtvt/FW5Hbmvf30M6WX8J/OnzjQXsL30kfwwCV8YgSvRJqxIVK3My+aEW+FTeHWc2vg+Xc3dL8DnfDw8pns/PcKEb+QrhUf+kZtQLYt7yff1yfvXUfyn/AW0vtXvxnr5E3qQrqHNnfypjAnSsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIa+EvBLySsgrIW9+wvH/spmfcLz5CQdcu3Sd+ifEiwbfmeSKmVP42+SNTDsz4a6UkDc24bqW7uHGGN6VTTddPBHOe5k/Bibcm7EL6X6UkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkFdCXgl5JeSVkPcXbU95K7pelgYAAAAASUVORK5CYII=", "kind": "letter"}, {"letter": "ק", "name": "Qof", "sound": "k", "final": "", "page": 28, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACK0lEQVR4nO3cwYqjQBRAUR3m/385vcggErqHJDZ0n1f3buNCObzSiiH77XbbSu7PT59AXS1Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuT7+9Mn8M3t+/7VR1P/PHcfc2H/wXtozCXfm0D4gPfVFT15GBdPeIZ55lpePf73Zz/OvOFxPuz5tfc3BxO+DTBMESY89+qSOGMJvacSfuMtTR9ElfB6Y5ZTknDeU+WVSMKj/LYB+8Irzdjs21N4MdTsoaUJZxQhX4R8EfINeeV7PFu+9IRC7+iPJkzhWWKGyktNIFy8CP/l7hHXJRyz5K5LeM4dwW1ZwjEjuK1JOOPb7aMVCc/pftuYrf2TDZu/ewtN4Ui/bR3CqX7bIgvp7N/aLEE4j+3cKgvp4CLki5AvQr4I+SLki5AvQr4I+SLki5AvQr4I+SLkm0Y4+73Sp00jXLAI+SLkG0W44I1wG0A46af178UTHq05gtvifx00ozlTuGwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyHfB7zZbRadIdFfAAAAAElFTkSuQmCC", "final_script": "", "kind": "letter"}, {"letter": "ר", "name": "Resh", "sound": "r", "final": "", "page": 22, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAAB9UlEQVR4nO3dwUrDQBRA0UT8/1+OC0EGi7VSQc+be7fpIsPhTSbQ0vO6rqPkXv76BurZIuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvgj5IuSLkC9Cvte/voHf7DzPO1en/qnKOWNh9/HWZqx3jSdc8b5ayy2wvuo1+1n4YXNd1x2V20uPT+3/DyZc/b798K3xGEV+I/1pj2y8VvAUPt+MQdyOcMbkrW1H+KkBg7gj4bBB3JFwWBHye2mEfBHybUo46USzKeGkIuSLkC9Cvgj5NiXUX+fXNiWcVIR8EfKv+RHy7Ug46Sxz7Em4pu+iR4QD2o6wLyHOaYbfsRvhsIPMe6N+nPZgY+bvvb2m8Bjnd+xGOM/v2I1wZBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcgXIV+EfBHyRcj3BmxOTBKJuI62AAAAAElFTkSuQmCC", "final_script": "", "kind": "letter"}, {"letter": "ש", "name": "Shin / Sin", "sound": "sh with right dot; s with left dot", "final": "", "page": 18, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACM0lEQVR4nO3dwWrCQBRA0Unp//+yXQhSbKtBLXJe7l1HyHiYySQY3E6n0yq5j3efQD1bhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8h2CcNu2bdvefRb/1Tbyr0bugk0a9UDCi9/V0K5cxwx8FOFfeL8ec/dIpTnXwj1+IxtCuN/v9uoqNoFwAMMzTSC8tHMJHTYReUId4Pl4woqQzyb8vooe7V7ikk34knT7IxIO2wHBhC+R0Kfgogkfa9gUXEcjnPeMex2KcKTfOg7hVL+11ue7T+DfG4x3bjLheLxzYwmP8+BmLOFstu+NJdzZgJ9rHGVH+mszbvPnEM7weCCY8Mmlbww5TFjnIuQbRfjw2uhuR5dOSH/1r8om/NnOiTjp2Q1P+BPgruKYveg5nnA9pHjjs1wTCNduxavXfQf4ranvF95t1KgnDebSDct5451JeKiGXAuPXIR8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyPcFU9B2LXzANwIAAAAASUVORK5CYII=", "final_script": "", "kind": "letter"}, {"letter": "ת", "name": "Tav", "sound": "t", "final": "", "page": 24, "script": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAACJUlEQVR4nO3dy26jQBBAUYjy/79MFlGsGT8UBzLynOLeJQuL5qjo3iCv27YtJff26huoo0XIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyFfhHwR8kXIFyHf+6tv4J+3ruvtxUn/zrHOWMzF6XM5d9luG7L2Act4BHa7tJETOXMv3LbtLszd60+O7H/bQMJvp2qYIk+47+lPUrQJjzx3fQu8BBM+8tvtig4iTLh9deQXfvF+XhVMeOkXJcRBnEB4pAGDOJNQHKbdzSQ8VUMIB7wPdzeE8Eg6f4TXcftohHxzCK/eh7uHiXuvziE8bRHyRcgXoXcEvSpCvgj/ijuOLhEOaCyhOE/7Gkv4ZH+eZVD1OYT6wXJ3cwh3NGAElzGEVyP4Uw/Xb5lBeGa/hfs47dsN73mPz5/S/RaO8FH7JAb4LTM+Tjt5E/bCkxchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJFyBchX4R8EfJ9ACFldgUK+0HZAAAAAElFTkSuQmCC", "final_script": "", "kind": "letter"}, {"kind": "word", "hebrew": "אני", "translit": "ani", "english": "I / me", "type": "word", "page": 43}, {"kind": "word", "hebrew": "אתה", "translit": "ata", "english": "you (male singular)", "type": "word", "page": 43}, {"kind": "word", "hebrew": "את", "translit": "at", "english": "you (female singular)", "type": "word", "page": 43}, {"kind": "word", "hebrew": "הוא", "translit": "hu", "english": "he", "type": "word", "page": 44}, {"kind": "word", "hebrew": "היא", "translit": "hi", "english": "she", "type": "word", "page": 44}, {"kind": "word", "hebrew": "אנחנו", "translit": "anachnu", "english": "we", "type": "word", "page": 49}, {"kind": "word", "hebrew": "אתם", "translit": "atem", "english": "you (masculine plural / mixed)", "type": "word", "page": 49}, {"kind": "word", "hebrew": "אתן", "translit": "aten", "english": "you (feminine plural)", "type": "word", "page": 50}, {"kind": "word", "hebrew": "הם", "translit": "hem", "english": "they (masculine plural / mixed)", "type": "word", "page": 50}, {"kind": "word", "hebrew": "הן", "translit": "hen", "english": "they (feminine plural)", "type": "word", "page": 50}, {"kind": "word", "hebrew": "מי?", "translit": "mi?", "english": "who?", "type": "word", "page": 43}, {"kind": "phrase", "hebrew": "מי אתה?", "translit": "mi ata?", "english": "who are you? (to a male)", "type": "phrase", "page": 43}, {"kind": "phrase", "hebrew": "מי את?", "translit": "mi at?", "english": "who are you? (to a female)", "type": "phrase", "page": 43}, {"kind": "word", "hebrew": "מאיפה?", "translit": "me'eifo?", "english": "from where? / where from?", "type": "word", "page": 43}, {"kind": "word", "hebrew": "איפה?", "translit": "eifo?", "english": "where?", "type": "word", "page": 43}, {"kind": "word", "hebrew": "מה?", "translit": "ma?", "english": "what?", "type": "word", "page": 53}, {"kind": "phrase", "hebrew": "זה אני", "translit": "ze ani", "english": "it is me / this is me", "type": "phrase", "page": 53}, {"kind": "word", "hebrew": "כן", "translit": "ken", "english": "yes", "type": "word", "page": 43}, {"kind": "word", "hebrew": "לא", "translit": "lo", "english": "no / not", "type": "word", "page": 43}, {"kind": "word", "hebrew": "או", "translit": "o", "english": "or", "type": "word", "page": 44}, {"kind": "word", "hebrew": "גם", "translit": "gam", "english": "also / too", "type": "word", "page": 46}, {"kind": "word", "hebrew": "ועכשיו", "translit": "ve'achshav", "english": "and now / now", "type": "word", "page": 43}, {"kind": "word", "hebrew": "עם", "translit": "im", "english": "with", "type": "word", "page": 53}, {"kind": "word", "hebrew": "על", "translit": "al", "english": "about / on", "type": "word", "page": 53}, {"kind": "word", "hebrew": "ב־", "translit": "be-", "english": "in / at", "type": "word", "page": 60}, {"kind": "word", "hebrew": "מ־", "translit": "mi-", "english": "from", "type": "word", "page": 60}, {"kind": "word", "hebrew": "ליד", "translit": "leyad", "english": "near / next to", "type": "word", "page": 48}, {"kind": "word", "hebrew": "פה", "translit": "po", "english": "here", "type": "word", "page": 50}, {"kind": "word", "hebrew": "שם", "translit": "sham", "english": "there", "type": "word", "page": 57}, {"kind": "word", "hebrew": "בבית", "translit": "babayit", "english": "at home", "type": "word", "page": 53}, {"kind": "word", "hebrew": "להתראות", "translit": "lehitra'ot", "english": "goodbye / see you", "type": "word", "page": 60}, {"kind": "word", "hebrew": "שלום", "translit": "shalom", "english": "hello / peace", "type": "word", "page": 55}, {"kind": "phrase", "hebrew": "שלום עליכם", "translit": "shalom aleichem", "english": "peace be upon you / hello", "type": "phrase", "page": 59}, {"kind": "phrase", "hebrew": "הבאנו שלום עליכם", "translit": "hevinu shalom aleichem", "english": "we brought peace to you / title of a song", "type": "phrase", "page": 59}, {"kind": "word", "hebrew": "ישראל", "translit": "yisra'el", "english": "Israel", "type": "word", "page": 43}, {"kind": "word", "hebrew": "ירושלים", "translit": "yerushalayim", "english": "Jerusalem", "type": "word", "page": 43}, {"kind": "word", "hebrew": "תל אביב", "translit": "tel aviv", "english": "Tel Aviv", "type": "word", "page": 48}, {"kind": "word", "hebrew": "חיפה", "translit": "cheifa", "english": "Haifa", "type": "word", "page": 48}, {"kind": "word", "hebrew": "אמסטרדם", "translit": "amsterdam", "english": "Amsterdam", "type": "word", "page": 48}, {"kind": "word", "hebrew": "האג", "translit": "ha'ag", "english": "The Hague", "type": "word", "page": 48}, {"kind": "word", "hebrew": "פריז", "translit": "pariz", "english": "Paris", "type": "word", "page": 48}, {"kind": "word", "hebrew": "אילת", "translit": "eilat", "english": "Eilat", "type": "word", "page": 61}, {"kind": "word", "hebrew": "הולנד", "translit": "holand", "english": "Holland / the Netherlands", "type": "word", "page": 43}, {"kind": "word", "hebrew": "גרמניה", "translit": "germanya", "english": "Germany", "type": "word", "page": 48}, {"kind": "word", "hebrew": "סין", "translit": "sin", "english": "China", "type": "word", "page": 49}, {"kind": "word", "hebrew": "קוריאה", "translit": "koreya", "english": "Korea", "type": "word", "page": 49}, {"kind": "word", "hebrew": "אמריקה", "translit": "amerika", "english": "America", "type": "word", "page": 49}, {"kind": "word", "hebrew": "איראן", "translit": "iran", "english": "Iran", "type": "word", "page": 49}, {"kind": "word", "hebrew": "עיראק", "translit": "iraq", "english": "Iraq", "type": "word", "page": 48}, {"kind": "word", "hebrew": "יפן", "translit": "yapan", "english": "Japan", "type": "word", "page": 54}, {"kind": "word", "hebrew": "צרפת", "translit": "tsarfat", "english": "France", "type": "word", "page": 54}, {"kind": "word", "hebrew": "אנגליה", "translit": "angliya", "english": "England", "type": "word", "page": 54}, {"kind": "word", "hebrew": "רוסיה", "translit": "rusiya", "english": "Russia", "type": "word", "page": 54}, {"kind": "word", "hebrew": "בלארוס", "translit": "belarus", "english": "Belarus", "type": "word", "page": 51}, {"kind": "word", "hebrew": "שוודיה", "translit": "svedya", "english": "Sweden", "type": "word", "page": 51}, {"kind": "word", "hebrew": "אתיופיה", "translit": "etyopya", "english": "Ethiopia", "type": "word", "page": 51}, {"kind": "word", "hebrew": "סודן", "translit": "sudan", "english": "Sudan", "type": "word", "page": 51}, {"kind": "word", "hebrew": "סעודיה", "translit": "saudiya", "english": "Saudi Arabia", "type": "word", "page": 54}, {"kind": "word", "hebrew": "איטליה", "translit": "italya", "english": "Italy", "type": "word", "page": 58}, {"kind": "word", "hebrew": "מהולנד", "translit": "meholand", "english": "from Holland", "type": "word", "page": 43}, {"kind": "word", "hebrew": "מישראל", "translit": "meyisra'el", "english": "from Israel", "type": "word", "page": 48}, {"kind": "word", "hebrew": "מגרמניה", "translit": "migermanya", "english": "from Germany", "type": "word", "page": 48}, {"kind": "word", "hebrew": "מסין", "translit": "misin", "english": "from China", "type": "word", "page": 48}, {"kind": "word", "hebrew": "מקוריאה", "translit": "mikoreya", "english": "from Korea", "type": "word", "page": 47}, {"kind": "word", "hebrew": "מעיראק", "translit": "me'iraq", "english": "from Iraq", "type": "word", "page": 48}, {"kind": "word", "hebrew": "מפריז", "translit": "mipariz", "english": "from Paris", "type": "word", "page": 48}, {"kind": "word", "hebrew": "מאמריקה", "translit": "me'amerika", "english": "from America", "type": "word", "page": 47}, {"kind": "word", "hebrew": "מאנגליה", "translit": "me'angliya", "english": "from England", "type": "word", "page": 54}, {"kind": "word", "hebrew": "מצרפת", "translit": "mitsarfat", "english": "from France", "type": "word", "page": 54}, {"kind": "word", "hebrew": "מרוסיה", "translit": "merusiya", "english": "from Russia", "type": "word", "page": 57}, {"kind": "word", "hebrew": "מבלארוס", "translit": "mibelarus", "english": "from Belarus", "type": "word", "page": 51}, {"kind": "word", "hebrew": "משוודיה", "translit": "misvedya", "english": "from Sweden", "type": "word", "page": 51}, {"kind": "word", "hebrew": "מאתיופיה", "translit": "me'etyopya", "english": "from Ethiopia", "type": "word", "page": 51}, {"kind": "word", "hebrew": "מסודן", "translit": "misudan", "english": "from Sudan", "type": "word", "page": 51}, {"kind": "word", "hebrew": "מאילת", "translit": "me'eilat", "english": "from Eilat", "type": "word", "page": 61}, {"kind": "word", "hebrew": "אבא", "translit": "aba", "english": "dad / father", "type": "word", "page": 46}, {"kind": "word", "hebrew": "אימא", "translit": "ima", "english": "mum / mother", "type": "word", "page": 46}, {"kind": "word", "hebrew": "בן", "translit": "ben", "english": "son / boy", "type": "word", "page": 46}, {"kind": "word", "hebrew": "בת", "translit": "bat", "english": "daughter / girl", "type": "word", "page": 46}, {"kind": "word", "hebrew": "ילד", "translit": "yeled", "english": "boy / child", "type": "word", "page": 51}, {"kind": "word", "hebrew": "ילדה", "translit": "yalda", "english": "girl", "type": "word", "page": 51}, {"kind": "word", "hebrew": "ילדים", "translit": "yeladim", "english": "children / boys", "type": "word", "page": 51}, {"kind": "word", "hebrew": "סטודנט", "translit": "student", "english": "student (male)", "type": "word", "page": 46}, {"kind": "word", "hebrew": "סטודנטית", "translit": "studentit", "english": "student (female)", "type": "word", "page": 47}, {"kind": "word", "hebrew": "סטודנטים", "translit": "studentim", "english": "students (masculine plural / mixed)", "type": "word", "page": 50}, {"kind": "word", "hebrew": "סטודנטיות", "translit": "studentiyot", "english": "students (feminine plural)", "type": "word", "page": 50}, {"kind": "word", "hebrew": "מורה", "translit": "mora", "english": "teacher", "type": "word", "page": 46}, {"kind": "word", "hebrew": "מורים", "translit": "morim", "english": "teachers (masculine plural / mixed)", "type": "word", "page": 50}, {"kind": "word", "hebrew": "מורות", "translit": "morot", "english": "teachers (feminine plural)", "type": "word", "page": 50}, {"kind": "word", "hebrew": "תלמיד", "translit": "talmid", "english": "student / pupil (male)", "type": "word", "page": 55}, {"kind": "word", "hebrew": "תלמידה", "translit": "talmida", "english": "student / pupil (female)", "type": "word", "page": 55}, {"kind": "word", "hebrew": "תלמידים", "translit": "talmidim", "english": "students / pupils (masculine plural / mixed)", "type": "word", "page": 55}, {"kind": "word", "hebrew": "תלמידות", "translit": "talmidot", "english": "students / pupils (feminine plural)", "type": "word", "page": 55}, {"kind": "word", "hebrew": "פרופסור", "translit": "profesor", "english": "professor", "type": "word", "page": 53}, {"kind": "word", "hebrew": "עוגה", "translit": "uga", "english": "cake", "type": "word", "page": 46}, {"kind": "word", "hebrew": "סודה", "translit": "soda", "english": "soda", "type": "word", "page": 46}, {"kind": "word", "hebrew": "פיצה", "translit": "pitsa", "english": "pizza", "type": "word", "page": 46}, {"kind": "word", "hebrew": "פלאפל", "translit": "falafel", "english": "falafel", "type": "word", "page": 46}, {"kind": "word", "hebrew": "מים", "translit": "mayim", "english": "water", "type": "word", "page": 45}, {"kind": "word", "hebrew": "עברית", "translit": "ivrit", "english": "Hebrew", "type": "word", "page": 52}, {"kind": "word", "hebrew": "אנגלית", "translit": "anglit", "english": "English", "type": "word", "page": 54}, {"kind": "word", "hebrew": "ערבית", "translit": "aravit", "english": "Arabic", "type": "word", "page": 54}, {"kind": "word", "hebrew": "ספרדית", "translit": "sfaradit", "english": "Spanish", "type": "word", "page": 54}, {"kind": "word", "hebrew": "צרפתית", "translit": "tsarfatit", "english": "French", "type": "word", "page": 54}, {"kind": "word", "hebrew": "הולנדית", "translit": "holandit", "english": "Dutch", "type": "word", "page": 53}, {"kind": "word", "hebrew": "סינית", "translit": "sinit", "english": "Chinese", "type": "word", "page": 54}, {"kind": "word", "hebrew": "קוריאנית", "translit": "koreanit", "english": "Korean", "type": "word", "page": 54}, {"kind": "word", "hebrew": "רוסית", "translit": "rusit", "english": "Russian", "type": "word", "page": 54}, {"kind": "word", "hebrew": "גרמנית", "translit": "germanit", "english": "German", "type": "word", "page": 59}, {"kind": "word", "hebrew": "ארמית", "translit": "aramit", "english": "Aramaic", "type": "word", "page": 57}, {"kind": "word", "hebrew": "גר", "translit": "gar", "english": "lives (masculine singular)", "type": "word", "page": 48}, {"kind": "word", "hebrew": "גרה", "translit": "gara", "english": "lives (feminine singular)", "type": "word", "page": 51}, {"kind": "word", "hebrew": "גרים", "translit": "garim", "english": "live (masculine plural / mixed)", "type": "word", "page": 51}, {"kind": "word", "hebrew": "גרות", "translit": "garot", "english": "live (feminine plural)", "type": "word", "page": 51}, {"kind": "word", "hebrew": "לומד", "translit": "lomed", "english": "studies / learns (masculine singular)", "type": "word", "page": 52}, {"kind": "word", "hebrew": "לומדת", "translit": "lomedet", "english": "studies / learns (feminine singular)", "type": "word", "page": 52}, {"kind": "word", "hebrew": "לומדים", "translit": "lomdim", "english": "study / learn (masculine plural / mixed)", "type": "word", "page": 52}, {"kind": "word", "hebrew": "לומדות", "translit": "lomdot", "english": "study / learn (feminine plural)", "type": "word", "page": 52}, {"kind": "word", "hebrew": "מדבר", "translit": "medaber", "english": "speaks / talks (masculine singular)", "type": "word", "page": 53}, {"kind": "word", "hebrew": "מדברת", "translit": "medaberet", "english": "speaks / talks (feminine singular)", "type": "word", "page": 54}, {"kind": "word", "hebrew": "מדברים", "translit": "medabrim", "english": "speak / talk (masculine plural / mixed)", "type": "word", "page": 53}, {"kind": "word", "hebrew": "מדברות", "translit": "medabrot", "english": "speak / talk (feminine plural)", "type": "word", "page": 54}, {"kind": "word", "hebrew": "קורא", "translit": "kore", "english": "reads (masculine singular)", "type": "word", "page": 56}, {"kind": "word", "hebrew": "קוראת", "translit": "koret", "english": "reads (feminine singular)", "type": "word", "page": 56}, {"kind": "word", "hebrew": "קוראים", "translit": "kor'im", "english": "read (masculine plural / mixed)", "type": "word", "page": 56}, {"kind": "word", "hebrew": "קוראות", "translit": "kor'ot", "english": "read (feminine plural)", "type": "word", "page": 56}, {"kind": "word", "hebrew": "כותב", "translit": "kotev", "english": "writes (masculine singular)", "type": "word", "page": 56}, {"kind": "word", "hebrew": "כותבת", "translit": "kotevet", "english": "writes (feminine singular)", "type": "word", "page": 56}, {"kind": "word", "hebrew": "כותבים", "translit": "kotvim", "english": "write (masculine plural / mixed)", "type": "word", "page": 56}, {"kind": "word", "hebrew": "כותבות", "translit": "kotvot", "english": "write (feminine plural)", "type": "word", "page": 56}, {"kind": "word", "hebrew": "בא", "translit": "ba", "english": "comes (masculine singular)", "type": "word", "page": 57}, {"kind": "word", "hebrew": "באה", "translit": "ba'a", "english": "comes (feminine singular)", "type": "word", "page": 57}, {"kind": "word", "hebrew": "באים", "translit": "ba'im", "english": "come (masculine plural / mixed)", "type": "word", "page": 57}, {"kind": "word", "hebrew": "באות", "translit": "ba'ot", "english": "come (feminine plural)", "type": "word", "page": 57}, {"kind": "word", "hebrew": "שר", "translit": "shar", "english": "sings (masculine singular)", "type": "word", "page": 58}, {"kind": "word", "hebrew": "שרה", "translit": "shara", "english": "sings (feminine singular)", "type": "word", "page": 58}, {"kind": "word", "hebrew": "שרים", "translit": "sharim", "english": "sing (masculine plural / mixed)", "type": "word", "page": 58}, {"kind": "word", "hebrew": "שרות", "translit": "sharot", "english": "sing (feminine plural)", "type": "word", "page": 58}, {"kind": "word", "hebrew": "ספר", "translit": "sefer", "english": "book", "type": "word", "page": 56}, {"kind": "word", "hebrew": "ספרים", "translit": "sfarim", "english": "books", "type": "word", "page": 56}, {"kind": "word", "hebrew": "עיתון", "translit": "iton", "english": "newspaper", "type": "word", "page": 56}, {"kind": "word", "hebrew": "עיתונים", "translit": "itonim", "english": "newspapers", "type": "word", "page": 56}, {"kind": "word", "hebrew": "מספרים", "translit": "misparim", "english": "numbers", "type": "word", "page": 56}, {"kind": "word", "hebrew": "היסטוריה", "translit": "historia", "english": "history", "type": "word", "page": 52}, {"kind": "word", "hebrew": "גאוגרפיה", "translit": "geografya", "english": "geography", "type": "word", "page": 52}, {"kind": "word", "hebrew": "מתמטיקה", "translit": "matematika", "english": "mathematics", "type": "word", "page": 53}, {"kind": "word", "hebrew": "פיזיקה", "translit": "fizika", "english": "physics", "type": "word", "page": 53}, {"kind": "word", "hebrew": "לוגיקה", "translit": "logika", "english": "logic", "type": "word", "page": 56}, {"kind": "word", "hebrew": "מוזיקה", "translit": "muzika", "english": "music", "type": "word", "page": 61}, {"kind": "word", "hebrew": "אוניברסיטה", "translit": "universita", "english": "university", "type": "word", "page": 52}, {"kind": "word", "hebrew": "אקדמיה למוזיקה", "translit": "akademya lemuzika", "english": "academy of music", "type": "phrase", "page": 61}, {"kind": "word", "hebrew": "כיתה", "translit": "kita", "english": "classroom / class", "type": "word", "page": 55}, {"kind": "word", "hebrew": "אולפן", "translit": "ulpan", "english": "ulpan / Hebrew class", "type": "word", "page": 57}, {"kind": "word", "hebrew": "אופרה", "translit": "opera", "english": "opera", "type": "word", "page": 61}, {"kind": "word", "hebrew": "קיבוץ", "translit": "kibutz", "english": "kibbutz", "type": "word", "page": 51}, {"kind": "word", "hebrew": "אוהל", "translit": "ohel", "english": "tent", "type": "word", "page": 51}, {"kind": "word", "hebrew": "איגלו", "translit": "iglu", "english": "igloo", "type": "word", "page": 51}, {"kind": "word", "hebrew": "ספרייה", "translit": "sifriya", "english": "library", "type": "word", "page": 59}];
+let pool=[],order=[],idx=0,revealed=false,activeMode="recognition";
+let state=JSON.parse(localStorage.getItem("hebrewFlashcardsV4")||"{}");
+
+function save(){localStorage.setItem("hebrewFlashcardsV4",JSON.stringify(state))}
+function rebuildPool(){
+  const deck=document.getElementById("deck").value;
+  pool=cards.map((c,i)=>({c,i})).filter(x=>{
+    if(deck==="letters") return x.c.kind==="letter";
+    if(deck==="words") return x.c.kind==="word";
+    return true;
+  });
+  order=[...Array(pool.length).keys()];
+  idx=0;
+}
+function chosenMode(){
+  let m=document.getElementById("mode").value;
+  if(m==="mixed") return Math.random()<0.5?"recognition":"production";
+  return m;
+}
+function currentCard(){return pool[order[idx]].c}
+function render(){
+  revealed=false; activeMode=chosenMode(); let c=currentCard();
+  document.getElementById("front").classList.remove("hidden");
+  document.getElementById("back").classList.add("hidden");
+  document.getElementById("actions").classList.add("hidden");
+  let tag="",p="",content="";
+  if(c.kind==="letter"){
+    if(activeMode==="recognition"){
+      tag="LETTER → NAME"; p="What is this Hebrew letter?";
+      content=`<div class="hebrew">${c.letter}</div>`;
+    }else{
+      tag="NAME → WRITE"; p="Say it, then write the printed and handwritten forms before revealing.";
+      content=`<div class="name">${c.name}</div>`;
+    }
+  }else{
+    if(activeMode==="recognition"){
+      tag="HEBREW → ENGLISH"; p="What does this mean?";
+      content=`<div class="hebrew" style="font-size:${c.hebrew.length>6?'72px':'105px'}">${c.hebrew}</div>`;
+    }else{
+      tag="ENGLISH → HEBREW"; p="Say the Hebrew aloud, then write it before revealing.";
+      content=`<div class="name" style="font-size:38px">${c.english}</div>`;
+    }
+  }
+  document.getElementById("tag").textContent=tag;
+  document.getElementById("source").textContent=c.page?`Textbook p. ${c.page}`:"";
+  document.getElementById("prompt").textContent=p;
+  document.getElementById("frontcontent").innerHTML=content;
+  stats();
+}
+function reveal(){
+  if(revealed)return; revealed=true; let c=currentCard();
+  document.getElementById("front").classList.add("hidden");
+  if(c.kind==="letter"){
+    let f=c.final?`<div class="final"><strong>Final form</strong><div class="finalletter">${c.final}</div><div class="scriptbox"><h3>Handwritten final form from your textbook</h3><img class="scriptimg" src="${c.final_script}"></div></div>`:"";
+    document.getElementById("back").innerHTML=`<h2>${c.name}</h2><div>Printed form</div><div class="print">${c.letter}</div><div class="sound"><strong>Sound:</strong> ${c.sound}</div><div class="scriptbox"><h3>Handwritten/script form from your textbook</h3><img class="scriptimg" src="${c.script}"></div>${f}<div class="write"><strong>Writing practice:</strong> hide the answer and write the printed form and handwritten form once from memory.</div>`;
+  }else{
+    document.getElementById("back").innerHTML=`<h2 style="direction:rtl;font-size:58px">${c.hebrew}</h2><div class="sound" style="font-size:32px;line-height:1.2;margin:14px 0 18px"><strong>${c.english}</strong></div><div style="font-size:20px;margin:10px 0 18px"><strong>Pronunciation:</strong> ${c.translit}</div><div class="scriptbox"><h3>Handwriting practice</h3><div style="font-size:15px;color:#555;padding:16px 8px">Write <strong style="font-size:26px;direction:rtl">${c.hebrew}</strong> by hand from memory.<br><span style="font-size:12px;color:#888">A textbook-matched cursive word image will be added when a clean example is available.</span></div></div><div class="write"><strong>Recall check:</strong> say the word aloud, then write it once before rating the card.</div>`;
+  }
+  document.getElementById("back").classList.remove("hidden");
+  document.getElementById("actions").classList.remove("hidden");
+}
+function next(){idx=(idx+1)%order.length;render()}
+function prev(){idx=(idx-1+order.length)%order.length;render()}
+function cardKey(c){return c.kind==="letter"?"L:"+c.letter:"W:"+c.hebrew}
+function rate(r){
+  let c=currentCard(),k=cardKey(c);
+  state[k]=state[k]||{again:0,hard:0,good:0,easy:0}; state[k][r]++; save();
+  if(r==="again"){let item=order[idx]; order.splice(Math.min(order.length,idx+3),0,item)}
+  next();
+}
+function shuffle(){
+  for(let i=order.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]]}
+  idx=0; render();
+}
+function stats(){
+  document.getElementById("counter").textContent=`Card ${idx+1} of ${order.length}`;
+  let rated=0,t=0,g=0; const activeKeys=new Set(pool.map(x=>cardKey(x.c)));
+  Object.entries(state).forEach(([k,s])=>{if(!activeKeys.has(k))return;let n=(s.again||0)+(s.hard||0)+(s.good||0)+(s.easy||0);if(n)rated++;t+=n;g+=(s.good||0)+(s.easy||0)});
+  document.getElementById("score").textContent=t?`${Math.round(g/t*100)}% Good/Easy · ${rated}/${pool.length} practised`:"No ratings yet";
+  document.getElementById("bar").style.width=(pool.length?rated/pool.length*100:0)+"%";
+}
+document.getElementById("card").onclick=reveal;
+document.getElementById("reveal").onclick=reveal;
+document.getElementById("next").onclick=next;
+document.getElementById("prev").onclick=prev;
+document.getElementById("shuffle").onclick=shuffle;
+document.getElementById("deck").onchange=()=>{rebuildPool();render()};
+document.getElementById("mode").onchange=()=>{idx=0;render()};
+document.getElementById("reset").onclick=()=>{if(confirm("Reset all saved progress?")){localStorage.removeItem("hebrewFlashcardsV4");location.reload()}};
+document.querySelectorAll("[data-rate]").forEach(b=>b.onclick=e=>{e.stopPropagation();rate(b.dataset.rate)});
+document.addEventListener("keydown",e=>{if(e.code==="Space"){e.preventDefault();reveal()}if(e.key==="ArrowRight")next();if(e.key==="ArrowLeft")prev();if(["1","2","3","4"].includes(e.key)&&revealed)rate(["again","hard","good","easy"][+e.key-1])});
+rebuildPool();
+render();
+
+
+function detectAdaptiveUI(){
+  const w = window.innerWidth || document.documentElement.clientWidth;
+  const h = window.innerHeight || document.documentElement.clientHeight;
+  const shortSide = Math.min(w,h);
+  const longSide = Math.max(w,h);
+  const aspect = w / Math.max(h,1);
+  const landscape = w > h;
+  const coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+  const touchPoints = navigator.maxTouchPoints || 0;
+
+  const phoneBySize = shortSide <= 600 && longSide <= 1024;
+  const phoneByTouch = coarse && shortSide <= 700;
+  const phoneByPortraitShape = !landscape && w <= 640 && aspect <= 0.82;
+  const phoneByLandscapeShape = landscape && h <= 500 && w <= 950;
+  const isPhone = phoneBySize || phoneByTouch || phoneByPortraitShape || phoneByLandscapeShape;
+  const isNarrow = isPhone && w <= 390 && !landscape;
+
+  document.body.classList.toggle("phone-ui", isPhone);
+  document.body.classList.toggle("phone-narrow", isNarrow);
+  document.body.classList.toggle("phone-landscape", isPhone && landscape);
+
+  const debug = document.getElementById("deviceDebug");
+  if(debug){
+    debug.textContent =
+      `${isPhone ? "PHONE" : "DESKTOP"} | ${w}×${h} | AR ${aspect.toFixed(2)} | ${landscape ? "landscape" : "portrait"} | coarse:${coarse} | touch:${touchPoints}`;
+  }
+}
+
+(function initAdaptiveUI(){
+  if(new URLSearchParams(location.search).get("debugui")==="1"){
+    document.body.classList.add("debug-device");
+  }
+  detectAdaptiveUI();
+
+  let resizeTimer;
+  const update = ()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{
+      detectAdaptiveUI();
+      if(typeof render==="function") render();
+    },80);
+  };
+
+  window.addEventListener("resize", update);
+  window.addEventListener("orientationchange", ()=>setTimeout(update,180));
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize", update);
+  }
+})();
+
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(err => {
+      console.log("Service worker registration failed:", err);
+    });
+  });
+}
+</script>
+
+</body></html>
