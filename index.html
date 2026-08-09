@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hebrew Ulpan Flashcards</title>
+<title>Hebrew Ulpan Flashcards v1.0.1</title>
 <style>
 :root{--pink:#ea4c91;--pale:#fff0f7;--ink:#222;--muted:#707070;--line:#eadde4}
 *{box-sizing:border-box} body{margin:0;background:#faf8f9;color:var(--ink);font-family:Segoe UI,Arial,sans-serif}
@@ -301,6 +301,30 @@ body.phone-ui.phone-landscape .nav button{
 }
 body.debug-device #deviceDebug{display:block}
 
+
+/* ---------- v1.0.1 adaptive front-text fitting ---------- */
+#frontcontent{
+  width:100%;
+  max-width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+#frontcontent .fit-front-text{
+  display:block;
+  width:100%;
+  max-width:100%;
+  max-height:100%;
+  overflow:hidden;
+  text-align:center;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  line-height:1.08;
+}
+body.phone-ui #frontcontent .fit-front-text{padding-inline:2px;}
+
 </style>
 
 <meta name="theme-color" content="#ea4c91">
@@ -318,7 +342,7 @@ body.debug-device #deviceDebug{display:block}
 <div id="deviceDebug"></div>
 <div class="wrap">
 <header>
-<div><h1>Hebrew Flashcards</h1><div class="sub">Version 5 · automatic desktop + phone UI · full Chapter 1</div></div>
+<div><h1>Hebrew Flashcards</h1><div class="sub">Version 1.0.1 · adaptive text fitting · full Chapter 1</div></div>
 <div class="controls">
 <select id="deck">
 <option value="letters">Alphabet</option>
@@ -376,18 +400,18 @@ function render(){
   if(c.kind==="letter"){
     if(activeMode==="recognition"){
       tag="LETTER → NAME"; p="What is this Hebrew letter?";
-      content=`<div class="hebrew">${c.letter}</div>`;
+      content=`<div class="hebrew fit-front-text">${c.letter}</div>`;
     }else{
       tag="NAME → WRITE"; p="Say it, then write the printed and handwritten forms before revealing.";
-      content=`<div class="name">${c.name}</div>`;
+      content=`<div class="name fit-front-text">${c.name}</div>`;
     }
   }else{
     if(activeMode==="recognition"){
       tag="HEBREW → ENGLISH"; p="What does this mean?";
-      content=`<div class="hebrew" style="font-size:${c.hebrew.length>6?'72px':'105px'}">${c.hebrew}</div>`;
+      content=`<div class="hebrew fit-front-text">${c.hebrew}</div>`;
     }else{
       tag="ENGLISH → HEBREW"; p="Say the Hebrew aloud, then write it before revealing.";
-      content=`<div class="name" style="font-size:38px">${c.english}</div>`;
+      content=`<div class="name fit-front-text">${c.english}</div>`;
     }
   }
   document.getElementById("tag").textContent=tag;
@@ -395,6 +419,7 @@ function render(){
   document.getElementById("prompt").textContent=p;
   document.getElementById("frontcontent").innerHTML=content;
   stats();
+  requestAnimationFrame(fitCurrentFrontText);
 }
 function reveal(){
   if(revealed)return; revealed=true; let c=currentCard();
@@ -442,6 +467,49 @@ rebuildPool();
 render();
 
 
+
+/* ---------- v1.0.1 text-fit engine ---------- */
+function fitElementText(el, opts={}){
+  if(!el) return;
+  const minPx=opts.minPx||22;
+  const maxPx=opts.maxPx||120;
+  const step=opts.step||1;
+  const container=opts.container||el.parentElement;
+  let size=maxPx;
+  el.style.fontSize=size+'px';
+  el.style.lineHeight='1.08';
+  const fits=()=>{
+    const cw=Math.max(1,container.clientWidth-6);
+    const ch=Math.max(1,container.clientHeight-6);
+    return el.scrollWidth<=cw && el.scrollHeight<=ch;
+  };
+  while(size>minPx && !fits()){
+    size-=step;
+    el.style.fontSize=size+'px';
+  }
+  if(!fits()) el.style.lineHeight='1';
+}
+function fitCurrentFrontText(){
+  const front=document.getElementById('front');
+  if(!front || front.classList.contains('hidden')) return;
+  const content=document.getElementById('frontcontent');
+  if(!content) return;
+  const target=content.querySelector('.fit-front-text');
+  if(!target) return;
+  const isHebrew=target.classList.contains('hebrew');
+  const isPhone=document.body.classList.contains('phone-ui');
+  const w=window.innerWidth||document.documentElement.clientWidth;
+  let maxPx,minPx;
+  if(isHebrew){
+    maxPx=isPhone?Math.min(132,w*0.30):Math.min(150,w*0.16);
+    minPx=isPhone?34:42;
+  }else{
+    maxPx=isPhone?Math.min(46,w*0.105):Math.min(54,w*0.06);
+    minPx=isPhone?20:24;
+  }
+  fitElementText(target,{minPx,maxPx,step:1,container:content});
+}
+
 function detectAdaptiveUI(){
   const w = window.innerWidth || document.documentElement.clientWidth;
   const h = window.innerHeight || document.documentElement.clientHeight;
@@ -462,6 +530,7 @@ function detectAdaptiveUI(){
   document.body.classList.toggle("phone-ui", isPhone);
   document.body.classList.toggle("phone-narrow", isNarrow);
   document.body.classList.toggle("phone-landscape", isPhone && landscape);
+  requestAnimationFrame(fitCurrentFrontText);
 
   const debug = document.getElementById("deviceDebug");
   if(debug){
@@ -496,9 +565,7 @@ function detectAdaptiveUI(){
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js").catch(err => {
-      console.log("Service worker registration failed:", err);
-    });
+    navigator.serviceWorker.register("./service-worker.js").catch(err => console.log("Service worker registration failed:", err));
   });
 }
 </script>
