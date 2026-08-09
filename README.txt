@@ -1,4 +1,4 @@
-VERSION: 1.0.3
+VERSION: 1.0.4
 
 Hebrew Ulpan Flashcards
 VERSION: 1.0.1
@@ -31,3 +31,13 @@ v1.0.3 CHANGES
 - Hebrew keeps up to about 88% of desktop card width and 96% on phones.
 - English keeps up to about 82% of desktop card width and 94% on phones.
 - Updated PWA cache to v1.0.3.
+
+v1.0.4 CHANGES
+- Removed sing verb cards: שר, שרה, שרים, שרות.
+- Added טוב — good.
+- Added מצוין — excellent.
+- Added שלום — hello / peace.
+- Added בוקר טוב — good morning.
+- Added צהריים טובים — good afternoon.
+- Added ערב טוב — good evening.
+- Added לילה טוב — good night.
