@@ -1,7 +1,7 @@
 {
-  "name": "Hebrew Ulpan Flashcards v1.0.1",
+  "name": "Hebrew Ulpan Flashcards v1.0.2",
   "short_name": "Hebrew Cards",
-  "description": "Hebrew alphabet and Chapter 1 flashcards with adaptive phone/desktop layouts and automatic front-text fitting.",
+  "description": "Hebrew alphabet and Chapter 1 flashcards with adaptive phone/desktop layouts and proportional card-width text fitting.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

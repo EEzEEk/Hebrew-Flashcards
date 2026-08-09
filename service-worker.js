@@ -1,4 +1,4 @@
-const CACHE_NAME = "hebrew-ulpan-flashcards-v1.0.1";
+const CACHE_NAME = "hebrew-ulpan-flashcards-v1.0.2";
 const APP_SHELL = [
   "./", "./index.html", "./manifest.webmanifest",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png"
