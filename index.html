@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hebrew Ulpan Flashcards v1.0.2</title>
+<title>Hebrew Ulpan Flashcards v1.0.3</title>
 <style>
 :root{--pink:#ea4c91;--pale:#fff0f7;--ink:#222;--muted:#707070;--line:#eadde4}
 *{box-sizing:border-box} body{margin:0;background:#faf8f9;color:var(--ink);font-family:Segoe UI,Arial,sans-serif}
@@ -349,6 +349,20 @@ body.phone-ui #frontcontent .fit-front-text.hebrew{
   max-width:96%;
 }
 
+
+/* ---------- v1.0.3 single-line front text ---------- */
+#frontcontent .fit-front-text{
+  white-space:nowrap !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+  hyphens:none !important;
+  width:auto !important;
+  max-width:none !important;
+  overflow:visible !important;
+  display:inline-block !important;
+  line-height:1 !important;
+}
+
 </style>
 
 <meta name="theme-color" content="#ea4c91">
@@ -366,7 +380,7 @@ body.phone-ui #frontcontent .fit-front-text.hebrew{
 <div id="deviceDebug"></div>
 <div class="wrap">
 <header>
-<div><h1>Hebrew Flashcards</h1><div class="sub">Version 1.0.2 · proportional card-width text fitting · full Chapter 1</div></div>
+<div><h1>Hebrew Flashcards</h1><div class="sub">Version 1.0.3 · single-line adaptive text fitting · full Chapter 1</div></div>
 <div class="controls">
 <select id="deck">
 <option value="letters">Alphabet</option>
@@ -492,48 +506,37 @@ render();
 
 
 
-/* ---------- v1.0.2 proportional card-width text-fit engine ---------- */
+/* ---------- v1.0.3 single-line adaptive text-fit engine ---------- */
 function fitElementText(el, opts={}){
   if(!el) return;
 
-  const minPx = opts.minPx || 22;
-  const maxPx = opts.maxPx || 180;
+  const minPx = opts.minPx || 18;
+  const maxPx = opts.maxPx || 220;
   const step = opts.step || 1;
-  const container = opts.container || el.parentElement;
   const widthRatio = opts.widthRatio || 0.82;
 
-  const card = document.getElementById("card") || container;
+  const card = document.getElementById("card") || el.parentElement;
   const cardWidth = Math.max(1, card.clientWidth);
-  const cardHeight = Math.max(1, card.clientHeight);
-
-  // Text is allowed to occupy only a percentage of the card width.
   const allowedWidth = Math.max(1, cardWidth * widthRatio);
 
-  // Leave vertical room for prompt, tag/source and reveal instruction.
-  const allowedHeight = Math.max(1, Math.min(
-    container.clientHeight || cardHeight * 0.60,
-    cardHeight * 0.62
-  ));
-
-  el.style.maxWidth = (widthRatio * 100) + "%";
+  // Critical v1.0.3 behaviour: absolutely no wrapping.
+  el.style.whiteSpace = "nowrap";
+  el.style.wordBreak = "normal";
+  el.style.overflowWrap = "normal";
+  el.style.hyphens = "none";
   el.style.width = "auto";
-  el.style.marginInline = "auto";
-  el.style.lineHeight = "1.08";
+  el.style.maxWidth = "none";
+  el.style.display = "inline-block";
+  el.style.lineHeight = "1";
 
   let size = maxPx;
   el.style.fontSize = size + "px";
 
-  const fits = () =>
-    el.scrollWidth <= allowedWidth &&
-    el.scrollHeight <= allowedHeight;
-
-  while(size > minPx && !fits()){
+  // Width is the only fit constraint for front prompts.
+  // Shrink until the full Hebrew/English prompt is one line inside the card.
+  while(size > minPx && el.scrollWidth > allowedWidth){
     size -= step;
     el.style.fontSize = size + "px";
-  }
-
-  if(!fits()){
-    el.style.lineHeight = "1";
   }
 }
 
@@ -552,12 +555,6 @@ function fitCurrentFrontText(){
   const isHebrew = target.classList.contains("hebrew");
   const isPhone = document.body.classList.contains("phone-ui");
 
-  /*
-    v1.0.2:
-    Font size is now driven primarily by CARD width rather than viewport width.
-    Short text can become large on large monitors, while long text shrinks only
-    as much as necessary to remain inside a percentage of the card.
-  */
   let maxPx, minPx, widthRatio;
 
   if(isHebrew){
@@ -565,20 +562,19 @@ function fitCurrentFrontText(){
     maxPx = isPhone
       ? Math.min(150, cardWidth * 0.34)
       : Math.min(220, cardWidth * 0.24);
-    minPx = isPhone ? 36 : 48;
+    minPx = isPhone ? 28 : 36;
   } else {
     widthRatio = isPhone ? 0.94 : 0.82;
     maxPx = isPhone
       ? Math.min(58, cardWidth * 0.13)
       : Math.min(92, cardWidth * 0.105);
-    minPx = isPhone ? 24 : 30;
+    minPx = isPhone ? 18 : 22;
   }
 
   fitElementText(target, {
     minPx,
     maxPx,
     step: 1,
-    container: content,
     widthRatio
   });
 }

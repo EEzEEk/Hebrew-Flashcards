@@ -1,4 +1,4 @@
-VERSION: 1.0.2
+VERSION: 1.0.3
 
 Hebrew Ulpan Flashcards
 VERSION: 1.0.1
@@ -23,3 +23,11 @@ v1.0.2 CHANGES
 - Long words and phrases still shrink automatically until they fit.
 - Text sizing is based on the actual card dimensions.
 - Updated PWA service-worker cache to v1.0.2.
+
+v1.0.3 CHANGES
+- Hebrew and English prompts on the front of cards are forced to one line.
+- No word wrapping, hyphenation, or automatic line splitting.
+- Font size shrinks only until that single line fits the permitted percentage of card width.
+- Hebrew keeps up to about 88% of desktop card width and 96% on phones.
+- English keeps up to about 82% of desktop card width and 94% on phones.
+- Updated PWA cache to v1.0.3.
