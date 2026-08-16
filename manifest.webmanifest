@@ -1,25 +1,23 @@
 {
-  "name": "Hebrew Ulpan Flashcards v1.0.4",
-  "short_name": "Hebrew Cards",
-  "description": "Hebrew alphabet and Chapter 1 flashcards with updated greetings vocabulary.",
-  "start_url": "./index.html",
+  "name": "Hebrew Study",
+  "short_name": "Hebrew Study",
+  "description": "A mobile-friendly Hebrew flashcard and quiz study app.",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#faf8f9",
-  "theme_color": "#ea4c91",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
   "orientation": "any",
   "icons": [
     {
       "src": "./icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "./icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
