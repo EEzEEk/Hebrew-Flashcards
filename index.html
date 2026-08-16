@@ -139,7 +139,65 @@
     .counter{top:14px;right:14px}
   }
 
+
+  @media (max-width:760px){
+    #studyNav{
+      position:static !important;
+      top:auto !important; left:auto !important; bottom:auto !important;
+      width:100% !important;
+      display:none !important;
+      flex-direction:column !important;
+      align-items:stretch !important;
+      gap:8px !important;
+      padding:10px 0 0 !important;
+      margin:0 !important;
+      background:transparent !important;
+      border:0 !important;
+      box-shadow:none !important;
+      transform:none !important;
+      overflow:visible !important;
+    }
+    #studyNav.mobile-open{display:flex !important}
+    #studyNav .tab{
+      width:100% !important;
+      text-align:left !important;
+      flex:none !important;
+      min-height:48px !important;
+    }
+    #menuBtn{display:inline-flex !important}
+    #navOverlay{display:none !important}
+  }
+
 </style>
+
+<style>
+@media (max-width:760px){
+  #studyNav{
+    position:static !important;
+    display:none !important;
+    width:100% !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    transform:none !important;
+    padding-top:10px !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    border:0 !important;
+  }
+  #studyNav.mobile-open{
+    display:flex !important;
+  }
+  #studyNav .tab{
+    display:block !important;
+    width:100% !important;
+    text-align:left !important;
+  }
+  #navOverlay{
+    display:none !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <header>
@@ -589,16 +647,14 @@ function selectSet(id){
 function openMobileNav(){
   if(window.innerWidth>760) return;
   $('#studyNav').classList.add('mobile-open');
-  $('#navOverlay').classList.remove('hidden');
   $('#menuBtn').setAttribute('aria-expanded','true');
 }
 function closeMobileNav(){
   $('#studyNav').classList.remove('mobile-open');
-  $('#navOverlay').classList.add('hidden');
   $('#menuBtn').setAttribute('aria-expanded','false');
 }
 $('#menuBtn').onclick=()=>$('#studyNav').classList.contains('mobile-open')?closeMobileNav():openMobileNav();
-$('#navOverlay').onclick=closeMobileNav;
+$('#navOverlay').classList.add('hidden');
 window.addEventListener('resize',()=>{
   if(window.innerWidth>760){
     closeMobileNav();
@@ -609,7 +665,9 @@ window.addEventListener('resize',()=>{
     $('#menuBtn').classList.remove('hidden');
   }
 });
-$$('.tab').forEach(b=>b.addEventListener('click',closeMobileNav));
+$$('.tab').forEach(b=>b.addEventListener('click',()=>{
+  if(window.innerWidth<=760) closeMobileNav();
+}));
 
 showHome();
 </script>
